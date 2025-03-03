@@ -40,7 +40,6 @@ class DashboardFilterWidget extends Widget implements HasForms
         // Isi form dengan filter yang tersimpan
         $this->form->fill([
             'bulan' => $filters['bulan'] ?? Carbon::now()->format('Y-m'),
-            'plat_nomor' => $filters['plat_nomor'] ?? null,
         ]);
     }
 
@@ -53,13 +52,6 @@ class DashboardFilterWidget extends Widget implements HasForms
                     ->options($this->getBulanOptions())
                     ->default(Carbon::now()->format('Y-m')),
 
-                Select::make('plat_nomor')
-                    ->label('Plat Nomor')
-                    ->options(Kendaraan::pluck('plat_nomor', 'id'))
-                    ->searchable()
-                    ->preload()
-                    ->placeholder('Semua Kendaraan')
-                    ->nullable(),
             ])
             ->statePath('data');
     }
@@ -68,6 +60,9 @@ class DashboardFilterWidget extends Widget implements HasForms
     // {
     //     return 'data';
     // }
+
+
+
     protected function getBulanOptions(): array
     {
         $options = [];
@@ -89,7 +84,6 @@ class DashboardFilterWidget extends Widget implements HasForms
         // Simpan filter ke session
         Session::put('dashboard_filters', [
             'bulan' => $this->data['bulan'] ?? Carbon::now()->format('Y-m'),
-            'plat_nomor' => $this->data['plat_nomor'] ?? null,
         ]);
 
         // Refresh halaman untuk menampilkan data berdasarkan filter
@@ -101,12 +95,10 @@ class DashboardFilterWidget extends Widget implements HasForms
         // Reset filter ke default
         $this->data = [
             'bulan' => Carbon::now()->format('Y-m'),
-            'plat_nomor' => null,
         ];
 
         Session::put('dashboard_filters', [
             'bulan' => Carbon::now()->format('Y-m'),
-            'plat_nomor' => null,
         ]);
 
         // Refresh halaman
