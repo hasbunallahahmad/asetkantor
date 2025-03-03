@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Models\PembelianBensin;
+use App\Models\Kendaraan;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Carbon\Carbon;
@@ -12,72 +13,94 @@ class PembelianBensinStatsWidget extends BaseWidget
 {
     protected static ?string $pollingInterval = '60s';
 
-    protected static ?int $sort = 3; // Sesuaikan untuk menampilkan di sebelah widget Biaya Servis Kendaraan
+    protected static ?int $sort = 3;
+
+    // Livewire lifecycle hook untuk refresh widget ketika event dipancarkan
+    protected function getListeners(): array
+    {
+        return [
+            'refreshDashboard' => '$refresh',
+        ];
+    }
 
     protected function getStats(): array
     {
-        // Ambil filter dari session jika ada
+        // Ambil filter dari session
         $filters = Session::get('dashboard_filters', []);
 
         // Set default bulan dan tahun jika tidak ada filter
-        $currentMonth = isset($filters['bulan']) ?
-            Carbon::createFromFormat('Y-m', $filters['bulan'])->month :
-            Carbon::now()->month;
-        $currentYear = isset($filters['bulan']) ?
-            Carbon::createFromFormat('Y-m', $filters['bulan'])->year :
-            Carbon::now()->year;
+        $currentDate = isset($filters['bulan'])
+            ? Carbon::createFromFormat('Y-m', $filters['bulan'])
+            : Carbon::now();
 
-        // Buat query dasar
-        $query = PembelianBensin::whereMonth('tanggal_pembelian', $currentMonth)
-            ->whereYear('tanggal_pembelian', $currentYear);
+        $currentMonth = $currentDate->month;
+        $currentYear = $currentDate->year;
+
+        // Periode bulan sebelumnya untuk perbandingan
+        $previousDate = $currentDate->copy()->subMonth();
+        $previousMonth = $previousDate->month;
+        $previousYear = $previousDate->year;
+
+        // Query untuk bulan ini
+        $queryCurrentMonth = PembelianBensin::whereMonth('bulan', $currentMonth)
+            ->whereYear('tahun', $currentYear);
+
+        // Query untuk bulan sebelumnya
+        $queryPreviousMonth = PembelianBensin::whereMonth('bulan', $previousMonth)
+            ->whereYear('tahun', $previousYear);
 
         // Terapkan filter plat nomor jika ada
         if (!empty($filters['plat_nomor'])) {
-            $query->where('kendaraan_id', $filters['plat_nomor']);
-        }
-
-        // Terapkan filter anggaran jika ada
-        if (!empty($filters['anggaran'])) {
-            $query->where('sumber_anggaran', $filters['anggaran']);
-        }
-
-        // Terapkan filter realisasi jika ada
-        if (!empty($filters['realisasi'])) {
-            if ($filters['realisasi'] === 'sudah') {
-                $query->whereNotNull('tanggal_realisasi');
-            } elseif ($filters['realisasi'] === 'belum') {
-                $query->whereNull('tanggal_realisasi');
-            }
+            $queryCurrentMonth->where('kendaraan_id', $filters['plat_nomor']);
+            $queryPreviousMonth->where('kendaraan_id', $filters['plat_nomor']);
         }
 
         // Hitung total pembelian bulan ini
-        $pembelianBulanIni = $query->count();
+        $pembelianBulanIni = $queryCurrentMonth->count();
+        $pembelianBulanSebelumnya = $queryPreviousMonth->count();
 
-        // Total liter bulan ini
-        $literBulanIni = $query->sum('jumlah_liter');
+        // Persentase perubahan untuk pembelian
+        $perubahanPembelian = $pembelianBulanSebelumnya > 0
+            ? ($pembelianBulanIni - $pembelianBulanSebelumnya) / $pembelianBulanSebelumnya * 100
+            : 0;
 
-        // Total biaya bulan ini
-        $biayaBulanIni = $query->sum('jumlah_biaya');
+        // Total biaya bulan ini dan bulan sebelumnya
+        $biayaBulanIni = $queryCurrentMonth->sum('realisasi');
+        $biayaBulanSebelumnya = $queryPreviousMonth->sum('realisasi');
 
-        // Rata-rata harga per liter
-        $rataHargaPerLiter = $literBulanIni > 0 ?
-            $biayaBulanIni / $literBulanIni : 0;
+        // Persentase perubahan untuk biaya
+        $perubahanBiaya = $biayaBulanSebelumnya > 0
+            ? ($biayaBulanIni - $biayaBulanSebelumnya) / $biayaBulanSebelumnya * 100
+            : 0;
+
+        // Informasi kendaraan jika filter diterapkan
+        $infoKendaraan = '';
+        if (!empty($filters['plat_nomor'])) {
+            $kendaraan = Kendaraan::find($filters['plat_nomor']);
+            if ($kendaraan) {
+                $infoKendaraan = ' untuk ' . $kendaraan->plat_nomor;
+            }
+        }
 
         return [
-            Stat::make('Total Pembelian BBM Bulan Ini', $pembelianBulanIni)
-                ->description('Jumlah pembelian di bulan ' . Carbon::createFromDate($currentYear, $currentMonth, 1)->translatedFormat('F'))
-                ->descriptionIcon('heroicon-m-fire')
-                ->color('danger'),
+            Stat::make('Total Pembelian BBM ' . $currentDate->translatedFormat('F Y') . $infoKendaraan, $pembelianBulanIni)
+                ->description(abs($perubahanPembelian) > 0
+                    ? number_format(abs($perubahanPembelian), 1) . '% ' . ($perubahanPembelian >= 0 ? 'naik' : 'turun') . ' dari bulan lalu'
+                    : 'Sama dengan bulan lalu')
+                ->descriptionIcon($perubahanPembelian > 0 ? 'heroicon-m-arrow-trending-up' : ($perubahanPembelian < 0 ? 'heroicon-m-arrow-trending-down' : 'heroicon-m-minus'))
+                ->color($perubahanPembelian > 0 ? 'danger' : ($perubahanPembelian < 0 ? 'success' : 'gray')),
 
-            Stat::make('Total Biaya BBM Bulan Ini', 'Rp ' . number_format($biayaBulanIni, 0, ',', '.'))
-                ->description('Total pengeluaran untuk BBM bulan ini')
-                ->descriptionIcon('heroicon-m-banknotes')
-                ->color('success'),
+            Stat::make('Total Biaya BBM ' . $currentDate->translatedFormat('F Y'), 'Rp ' . number_format($biayaBulanIni, 0, ',', '.'))
+                ->description(abs($perubahanBiaya) > 0
+                    ? number_format(abs($perubahanBiaya), 1) . '% ' . ($perubahanBiaya >= 0 ? 'naik' : 'turun') . ' dari bulan lalu'
+                    : 'Sama dengan bulan lalu')
+                ->descriptionIcon($perubahanBiaya > 0 ? 'heroicon-m-arrow-trending-up' : ($perubahanBiaya < 0 ? 'heroicon-m-arrow-trending-down' : 'heroicon-m-minus'))
+                ->color($perubahanBiaya > 0 ? 'warning' : ($perubahanBiaya < 0 ? 'success' : 'gray')),
 
-            Stat::make('Total Liter BBM', number_format($literBulanIni, 1, ',', '.') . ' L')
-                ->description('Harga rata-rata: Rp ' . number_format($rataHargaPerLiter, 0, ',', '.') . '/L')
-                ->descriptionIcon('heroicon-m-beaker')
-                ->color('warning'),
+            Stat::make('Bulan Sebelumnya (' . $previousDate->translatedFormat('F Y') . ')', 'Rp ' . number_format($biayaBulanSebelumnya, 0, ',', '.'))
+                ->description('Total ' . $pembelianBulanSebelumnya . ' pembelian di bulan ' . $previousDate->translatedFormat('F'))
+                ->descriptionIcon('heroicon-m-calendar')
+                ->color('info'),
         ];
     }
 }

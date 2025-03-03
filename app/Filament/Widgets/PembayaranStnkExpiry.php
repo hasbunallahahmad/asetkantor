@@ -7,14 +7,40 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Session;
+use Carbon\Carbon;
 
 class PembayaranStnkExpiry extends BaseWidget
 {
-    protected static ?int $sort = 3;
+    protected static ?int $sort = 5;
 
     protected int | string | array $columnSpan = 'full';
+
+    protected function getTableHeading(): string
+    {
+        return 'STNK yang Akan Segera Kadaluarsa';
+    }
     public function table(Table $table): Table
     {
+        // Ambil filter dari session
+        $filters = Session::get('dashboard_filters', []);
+
+        // Buat query dasar
+        $query = PembayaranStnk::query()
+            ->where('berlaku_hingga', '>=', now())
+            ->where('berlaku_hingga', '<=', now()->addMonths(3));
+
+        // Terapkan filter plat nomor jika ada
+        if (!empty($filters['plat_nomor'])) {
+            $query->where('kendaraan_id', $filters['plat_nomor']);
+        }
+
+        // Jika filter bulan ada, ambil data dari bulan tersebut
+        if (!empty($filters['bulan'])) {
+            $filterDate = Carbon::createFromFormat('Y-m', $filters['bulan']);
+            $query->whereMonth('tanggal_bayar', $filterDate->month)
+                ->whereYear('tanggal_bayar', $filterDate->year);
+        }
         return $table
             ->query(
                 // ...

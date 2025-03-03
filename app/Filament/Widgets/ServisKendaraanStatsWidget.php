@@ -9,6 +9,7 @@ use Carbon\Carbon;
 
 class ServisKendaraanStatsWidget extends BaseWidget
 {
+    protected static ?int $sort = 2;
     protected static ?string $pollingInterval = '60s';
 
     protected function getStats(): array
