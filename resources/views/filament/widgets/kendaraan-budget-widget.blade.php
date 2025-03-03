@@ -22,7 +22,7 @@
                     <tr>
                         <th scope="col" class="px-4 py-3">Plat Nomor</th>
                         <th scope="col" class="px-4 py-3">Merk / Model</th>
-                        <th scope="col" class="px-4 py-3">Anggaran Bulanan</th>
+                        <th scope="col" class="px-4 py-3">Anggaran Tahunan</th>
                         <th scope="col" class="px-4 py-3">Bensin</th>
                         <th scope="col" class="px-4 py-3">STNK/TNKB</th>
                         <th scope="col" class="px-4 py-3">Servis</th>
