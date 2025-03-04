@@ -208,6 +208,7 @@ class ServisKendaraanResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
 
+
             ])
             ->defaultSort('tanggal_servis', 'desc');
     }

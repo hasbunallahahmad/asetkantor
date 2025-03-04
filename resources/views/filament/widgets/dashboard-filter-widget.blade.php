@@ -4,6 +4,7 @@
             <h2 class="text-lg font-medium mb-4">Filter Dashboard</h2>
             
             <form wire:submit="filter">
+                <div class="space-y-4">
                 {{ $this->form }}
                 
                 <div class="flex items-center gap-4 mt-4">

@@ -20,11 +20,15 @@ class Kendaraan extends Model
         'nomor_mesin',
         'nomor_rangka',
         'tahun_pengadaan',
+        'tahun',
         'jenis_kendaraan_id',
+        'jenis',
+        'jatah_liter_per_hari',
         'anggaran_tahunan',
         'tanggal_pajak_tahunan',
         'tanggal_stnk_habis',
-        'status'
+        'status',
+        'pengguna_id',
     ];
     protected $casts = [
         'tahun_pengadaan' => 'integer',
@@ -32,21 +36,38 @@ class Kendaraan extends Model
         'tanggal_pajak_tahunan' => 'date',
         'tanggal_stnk_habis' => 'date',
     ];
+
+    public static function boot()
+    {
+        parent::boot();
+        static::creating(function ($model) {
+            $model->jatah_liter_per_hari = $model->jenis_kendaraan === 'roda_4' ? 7 : 1;
+        });
+    }
     public function jenisKendaraan(): BelongsTo
     {
         return $this->belongsTo(JenisKendaraan::class, 'jenis_kendaraan_id');
     }
-
+    public function getJenisAttribute()
+    {
+        // If 'jenis' is not set but jenis_kendaraan relation exists, return that
+        if (empty($this->attributes['jenis']) && $this->jenisKendaraan) {
+            return $this->jenisKendaraan->nama; // Assuming the name is stored in 'nama' field
+        }
+        return $this->attributes['jenis'] ?? 'KENDARAAN RODA 4'; // Default value
+    }
+    public function pengguna()
+    {
+        return $this->belongsTo(Pengguna::class, 'pengguna_id');
+    }
     public function penugasanKendaraan(): HasMany
     {
         return $this->hasMany(PenugasanKendaraan::class, 'kendaraan_id');
     }
-
     public function pengeluaran(): HasMany
     {
         return $this->hasMany(Pengeluaran::class, 'kendaraan_id');
     }
-
     public function servisKendaraan(): HasMany
     {
         return $this->hasMany(ServisKendaraan::class, 'kendaraan_id');
@@ -56,25 +77,31 @@ class Kendaraan extends Model
     {
         return $this->hasMany(PembelianBensin::class, 'kendaraan_id');
     }
-
     public function pembayaranStnk(): HasMany
     {
         return $this->hasMany(PembayaranStnk::class, 'kendaraan_id');
     }
-
     public function logAktivitas(): HasMany
     {
         return $this->hasMany(LogAktivitas::class, 'kendaraan_id');
     }
-
+    // public function penugasanAktif()
+    // {
+    //     return $this->hasOne(PenugasanKendaraan::class, 'kendaraan_id')
+    //         ->whereNull('tanggal_selesai');
+    // }
     // Pengguna aktif saat ini
-    public function penggunaAktif()
-    {
-        return $this->penugasanKendaraan()
-            ->whereNull('tanggal_selesai')
-            ->with('pengguna')
-            ->first()?->pengguna;
-    }
+    // public function penggunaSaatIni()
+    // {
+    //     return $this->hasOneThrough(
+    //         Pengguna::class,
+    //         PenugasanKendaraan::class,
+    //         'kendaraan_id', // Kunci asing pada PenugasanKendaraan
+    //         'id', // Kunci primer pada Pengguna
+    //         'id', // Kunci primer pada Kendaraan
+    //         'pengguna_id' // Kunci asing pada PenugasanKendaraan
+    //     )->whereNull('penugasan_kendaraans.tanggal_selesai');
+    // }
 
     // Total pengeluaran dalam periode tertentu
     public function totalPengeluaran($startDate = null, $endDate = null)

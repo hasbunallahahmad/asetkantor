@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Widgets\DashboardFilterWidget;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -12,6 +13,8 @@ use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use App\Filament\Widgets\KendaraanBudgetWidget;
 use App\Filament\Widgets\PembelianBensinStatsWidget;
+use App\Filament\Widgets\PembayaranStnkExpiry;
+use App\Filament\Widgets\ServisKendaraanStatsWidget;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -28,10 +31,14 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->brandName('SIPAKEN')
+            // ->brandLogo(asset('images/logo.png'))
+            // ->brandLogoHeight('auto')
             ->login()
             ->colors([
                 'primary' => Color::Amber,
             ])
+            ->maxContentWidth('full') // atau 'screen-2xl', 'screen-3xl', dll
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
@@ -41,6 +48,9 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 KendaraanBudgetWidget::class,
                 PembelianBensinStatsWidget::class,
+                DashboardFilterWidget::class,
+                PembayaranStnkExpiry::class,
+                ServisKendaraanStatsWidget::class,
 
                 // Widgets\AccountWidget::class,
                 // Widgets\FilamentInfoWidget::class,

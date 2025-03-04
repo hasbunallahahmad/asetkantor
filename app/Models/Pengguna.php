@@ -22,6 +22,11 @@ class Pengguna extends Model
         'no_telp'
     ];
 
+    public function kendaraan()
+    {
+        return $this->hasMany(Kendaraan::class, 'pengguna_id');
+    }
+
     public function jabatan(): BelongsTo
     {
         return $this->belongsTo(Jabatan::class);
@@ -43,5 +48,10 @@ class Pengguna extends Model
     public function logAktivitas(): HasMany
     {
         return $this->hasMany(LogAktivitas::class);
+    }
+
+    public function pembelianBensin(): HasMany
+    {
+        return $this->hasMany(PembelianBensin::class);
     }
 }

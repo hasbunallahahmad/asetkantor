@@ -15,6 +15,10 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class KategoriPengeluaranResource extends Resource
 {
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false; // Menu tidak akan muncul di sidebar
+    }
     protected static ?string $model = KategoriPengeluaran::class;
     protected static ?string $navigationIcon = 'heroicon-o-bookmark';
     protected static ?string $navigationGroup = 'Master Data';

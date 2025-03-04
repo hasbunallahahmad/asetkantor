@@ -46,6 +46,13 @@ class KendaraanResource extends Resource
                             ->maxLength(20)
                             ->unique(ignoreRecord: true)
                             ->columnSpan(1),
+                        Forms\Components\Select::make('pengguna_id')
+                            ->relationship('pengguna', 'nama')
+                            ->searchable()
+                            ->preload()
+                            ->placeholder('Pilih Nama Pengguna')
+                            ->label('Pengguna')
+                            ->columnSpan(1),
                         Forms\Components\TextInput::make('nomor_mesin')
                             ->maxLength(50)
                             ->columnSpan(1),
@@ -63,10 +70,10 @@ class KendaraanResource extends Resource
                             ->numeric()
                             ->prefix('Rp')
                             ->columnSpan(1),
-                        Forms\Components\DatePicker::make('tanggal_pajak_tahunan')
-                            ->columnSpan(1),
-                        Forms\Components\DatePicker::make('tanggal_stnk_habis')
-                            ->columnSpan(1),
+                        // Forms\Components\DatePicker::make('tanggal_pajak_tahunan')
+                        //     ->columnSpan(1),
+                        // Forms\Components\DatePicker::make('tanggal_stnk_habis')
+                        //     ->columnSpan(1),
                         Forms\Components\Select::make('status')
                             ->options([
                                 'Aktif' => 'Aktif',
@@ -76,6 +83,7 @@ class KendaraanResource extends Resource
                             ->default('Aktif')
                             ->required()
                             ->columnSpan(1),
+
                     ])
                     ->columns(2),
             ]);
@@ -95,6 +103,14 @@ class KendaraanResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('jenisKendaraan.nama')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('pengguna.nama')
+                    ->label('Pengguna')
+                    ->searchable()
+                    ->sortable()
+                    ->description(fn(Kendaraan $record) =>
+                    $record->pengguna ?
+                        "{$record->pengguna->jabatan->nama_jabatan} - {$record->pengguna->bidang->nama_bidang}" :
+                        null),
                 Tables\Columns\TextColumn::make('tahun_pengadaan')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('anggaran_tahunan')
@@ -151,6 +167,14 @@ class KendaraanResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+                // Tables\Columns\TextColumn::make('pengguna.nama')
+                //     ->label('Pengguna')
+                //     ->searchable()
+                //     ->sortable()
+                //     ->description(fn(Kendaraan $record) =>
+                //     $record->pengguna ?
+                //         "{$record->pengguna->jabatan->nama_jabatan} - {$record->pengguna->bidang->nama_bidang}" :
+                //         null),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -163,11 +187,11 @@ class KendaraanResource extends Resource
     {
         return [
             //
-            RelationManagers\PenugasanKendaraanRelationManager::class,
-            RelationManagers\PengeluaranRelationManager::class,
-            RelationManagers\PembelianBensinRelationManager::class,
-            RelationManagers\ServisKendaraanRelationManager::class,
-            RelationManagers\PembayaranStnkRelationManager::class,
+            // RelationManagers\PenugasanKendaraanRelationManager::class,
+            // RelationManagers\PengeluaranRelationManager::class,
+            // RelationManagers\PembelianBensinRelationManager::class,
+            // RelationManagers\ServisKendaraanRelationManager::class,
+            // RelationManagers\PembayaranStnkRelationManager::class,
         ];
     }
 

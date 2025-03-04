@@ -11,25 +11,35 @@ class PembelianBensin extends Model
     protected $table = 'pembelian_bensins';
     protected $fillable = [
         'kendaraan_id',
+        'tanggal_beli',
         'bulan',
         'tahun',
-        'realisasi',
-        'keterangan'
+        'jatah_liter_per_hari',
+        'jatah_liter_per_bulan',
+        'jenis_bbm',
+        'jumlah_liter',
+        'harga_per_liter',
+        'jumlah_harga',
+        'kilometer_kendaraan',
+        'pengeluaran_id',
+        'pengguna_id',
+        'keterangan',
     ];
 
-    // protected $casts = [
-    //     'tanggal_beli' => 'date',
-    //     'jumlah_liter' => 'decimal:2',
-    //     'harga_per_liter' => 'decimal:2',
-    //     'total_biaya' => 'decimal:2',
-    // ];
+    protected $casts = [
+        'jatah_liter_per_hari' => 'decimal:2',
+        'jatah_liter_per_bulan' => 'decimal:2',
+        'jumlah_liter' => 'decimal:2',
+        'harga_per_liter' => 'decimal:2',
+        'jumlah_harga' => 'decimal:2',
+    ];
 
     public function kendaraan(): BelongsTo
     {
         return $this->belongsTo(Kendaraan::class);
     }
 
-    public function getNamaBulanAttibute()
+    public function getNamaBulanAttribute()
     {
         return [
             1 => 'Januari',
@@ -50,5 +60,19 @@ class PembelianBensin extends Model
     public function pengeluaran(): BelongsTo
     {
         return $this->belongsTo(Pengeluaran::class, 'pengeluaran_id');
+    }
+
+    public function pengguna(): BelongsTo
+    {
+        return $this->belongsTo(Pengguna::class, 'pengguna_id');
+    }
+    public function getJenisBbmOptions()
+    {
+        return [
+            'PERTAMAX' => 'PERTAMAX',
+            'PERTAMAX DEX' => 'PERTAMAX DEX',
+            'PERTALITE' => 'PERTALITE',
+            'SOLAR' => 'SOLAR'
+        ];
     }
 }

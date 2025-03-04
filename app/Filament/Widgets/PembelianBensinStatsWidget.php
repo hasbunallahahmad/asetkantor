@@ -44,6 +44,7 @@ class PembelianBensinStatsWidget extends BaseWidget
         // Query untuk bulan ini
         $queryCurrentMonth = PembelianBensin::where('bulan', $currentMonth)
             ->where('tahun', $currentYear);
+        // ->sum('jumlah_harga');
 
         // Query untuk bulan sebelumnya
         $queryPreviousMonth = PembelianBensin::where('bulan', $previousMonth)
@@ -59,8 +60,8 @@ class PembelianBensinStatsWidget extends BaseWidget
             : 0;
 
         // Total biaya bulan ini dan bulan sebelumnya
-        $biayaBulanIni = $queryCurrentMonth->sum('realisasi');
-        $biayaBulanSebelumnya = $queryPreviousMonth->sum('realisasi');
+        $biayaBulanIni = $queryCurrentMonth->sum('jumlah_harga');
+        $biayaBulanSebelumnya = $queryPreviousMonth->sum('jumlah_harga');
 
         // Persentase perubahan untuk biaya
         $perubahanBiaya = $biayaBulanSebelumnya > 0
@@ -69,7 +70,7 @@ class PembelianBensinStatsWidget extends BaseWidget
 
         // Total pembelian keseluruhan
         $totalPembelian = PembelianBensin::count();
-        $totalBiaya = PembelianBensin::sum('realisasi');
+        $totalBiaya = PembelianBensin::sum('jumlah_harga');
 
         return [
             // Stat::make('Total Pembelian BBM ' . $currentDate->translatedFormat('F Y'), $pembelianBulanIni)

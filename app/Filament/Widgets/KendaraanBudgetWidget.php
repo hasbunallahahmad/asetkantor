@@ -64,7 +64,7 @@ class KendaraanBudgetWidget extends Widget
                 $bensinExpense = PembelianBensin::where('kendaraan_id', $kendaraan->id)
                     ->where('bulan', $month)
                     ->where('tahun', $year)
-                    ->sum('realisasi');
+                    ->sum('jumlah_harga');
 
                 $stnkExpense = PembayaranStnk::where('kendaraan_id', $kendaraan->id)
                     ->whereBetween('tanggal_bayar', [$startOfMonth, $endOfMonth])
@@ -132,7 +132,7 @@ class KendaraanBudgetWidget extends Widget
                     }
                 });
             })
-            ->sum('realisasi');
+            ->sum('jumlah_harga');
 
         // Get STNK payments for this period
         $stnkExpense = PembayaranStnk::where('kendaraan_id', $kendaraanId)
