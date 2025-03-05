@@ -20,6 +20,12 @@ class ServisKendaraanResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-c-cog';
     protected static ?string $navigationGroup = 'Cash Flow';
     protected static ?int $navigationSort = 6;
+
+    // public static function shouldRegisterNavigation(): bool
+    // {
+    //     return false; // Menu tidak akan muncul di sidebar
+    // }
+
     public static function getNavigationLabel(): string
     {
         return 'Servis Kendaraan';
