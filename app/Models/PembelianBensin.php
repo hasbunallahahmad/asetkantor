@@ -11,6 +11,7 @@ class PembelianBensin extends Model
     protected $table = 'pembelian_bensins';
     protected $fillable = [
         'kendaraan_id',
+        'pengguna_id',
         'tanggal_beli',
         'bulan',
         'tahun',
@@ -22,7 +23,6 @@ class PembelianBensin extends Model
         'jumlah_harga',
         'kilometer_kendaraan',
         'pengeluaran_id',
-        'pengguna_id',
         'keterangan',
     ];
 
@@ -71,6 +71,8 @@ class PembelianBensin extends Model
         return [
             'PERTAMAX' => 'PERTAMAX',
             'PERTAMAX DEX' => 'PERTAMAX DEX',
+            'PERTAMAX TURBO' => 'PERTAMAX TURBO',
+            'DEXLITE' => 'DEXLITE',
             'PERTALITE' => 'PERTALITE',
             'SOLAR' => 'SOLAR'
         ];

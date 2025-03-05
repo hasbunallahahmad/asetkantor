@@ -17,6 +17,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
+use function Livewire\on;
+
 class PembelianBensinResource extends Resource
 {
     protected static ?string $model = PembelianBensin::class;
@@ -48,6 +50,29 @@ class PembelianBensinResource extends Resource
                                     $kendaraan = Kendaraan::find($state);
                                     if ($kendaraan) {
 
+                                        // //cara 3
+                                        // //mengetahui pemegang kendaraan 
+                                        // $pemegangId = $kendaraan->pemegang ??
+                                        //     ($kendaraan->pengguna ? $kendaraan->pengguna->id : null);
+                                        // //mengatur data yang di simpan
+                                        // $set('jenis_kendaraan', $kendaraan->jenis);
+                                        // $set('tahun_pengadaan', $kendaraan->tahun ?? $kendaraan->tahun_pengadaan);
+                                        // $set('merk', $kendaraan->merk);
+                                        // $set('pengguna_id', $pemegangId);
+
+                                        // //mengatur jatah liter per hari 
+                                        // $jumlahRoda = $kendaraan->jenisKendaraan->jumlah_roda ?? 0;
+                                        // $jatahPerHari = match ($kendaraan->plat_nomor) {
+                                        //     'H 1676 XA' => 10,
+                                        //     default => ($jumlahRoda == 2) ? 1 : 7,
+                                        // };
+
+                                        // //memastikan data menjadi settle dan dapat tersimpan
+                                        // $set('jatah_liter_per_hari', $jatahPerHari);
+                                        // //end of cara 3 
+
+
+                                        //cara 1
                                         //mengambil jenis kendaraan 
                                         $set('jenis_kendaraan', $kendaraan->jenis);
 
@@ -63,9 +88,9 @@ class PembelianBensinResource extends Resource
                                         if (isset($kendaraan->pemegang)) {
                                             $set('pengguna_id', $kendaraan->pemegang);
                                         } elseif ($kendaraan->pengguna) {
-                                            $set('pengguna_id', $kendaraan->pengguna->nama ?? '');
+                                            $set('pengguna_id', $kendaraan->pengguna->id ?? null);
                                         } else {
-                                            $set('pengguna_id', '');
+                                            $set('pengguna_id', null);
                                         }
 
                                         // Cek plat nomor khusus H 1676 XA
@@ -80,7 +105,9 @@ class PembelianBensinResource extends Resource
                                         }
                                         // Ambil jumlah roda kendaraan dari database
                                         $jumlahRoda = $kendaraan->jenisKendaraan->jumlah_roda ?? 0;
+                                        //end of cara 1 
 
+                                        //cara 2
                                         // // Jika kendaraan roda 2 maka 1 liter, jika roda 4 maka 7 liter
                                         // $jatahPerHari = ($jumlahRoda == 2) ? 1 : 7;
 
@@ -99,25 +126,29 @@ class PembelianBensinResource extends Resource
                                         // $jatahPerBulan = $jatahPerHari * $daysInMonth;
 
                                         // $set('jatah_liter_per_bulan', $jatahPerBulan)
+                                        // end of cara 2
                                     }
                                 }
                             }),
                         Forms\Components\TextInput::make('jenis_kendaraan')
                             ->label('Jenis Kendaraan')
                             ->disabled()
-                            ->dehydrated(false),
+                            ->dehydrated(condition: true),
                         Forms\Components\TextInput::make('tahun_pengadaan')
                             ->label('Tahun Kendaraan')
                             ->disabled()
-                            ->dehydrated(false),
+                            ->dehydrated(condition: true),
                         Forms\Components\TextInput::make('merk')
                             ->label('Merk Kendaraan')
                             ->disabled()
-                            ->dehydrated(false),
-                        Forms\Components\TextInput::make('pengguna_id')
+                            ->dehydrated(condition: true),
+                        Forms\Components\Select::make('pengguna_id')
                             ->label('Pemegang')
+                            ->relationship('pengguna', 'nama') // Ini akan menampilkan nama, tetapi menyimpan ID
+                            ->searchable()
+                            ->preload()
                             ->disabled()
-                            ->dehydrated(false),
+                            ->dehydrated(condition: true),
                     ]),
                 Forms\Components\Grid::make('6')
                     ->schema([
@@ -139,15 +170,16 @@ class PembelianBensinResource extends Resource
                             ])
                             ->required(),
                         Forms\Components\TextInput::make('tahun')
-                            ->label('Tahun Periode')
+                            ->label('Tahun Pengadaan')
                             ->numeric()
                             ->required()
                             ->default(date('Y')),
                         Forms\Components\TextInput::make('jatah_liter_per_hari')
                             ->label('Jatah Liter Per Hari')
-                            ->numeric()
-                            ->disabled(),
-                        // ->reactive()
+                            ->rules('numeric')
+                            ->disabled()
+                            ->reactive()
+                            ->dehydrated(true),
                         // ->afterStateUpdated(function (callable $set, callable $get) {
                         //     $set('jumlah_liter', (int) $get('jatah_liter_per_hari') * (int) $get('jatah_liter_per_bulan'));
                         // })
@@ -155,13 +187,13 @@ class PembelianBensinResource extends Resource
                         Forms\Components\TextInput::make('jatah_liter_per_bulan')
                             ->label('Jatah Liter Per Bulan')
                             // ->numeric()
-                            // // ->reactive()
                             // // ->afterStateUpdated(function (callable $set, callable $get) {
                             // //     $set('jumlah_liter', (int) $get('jatah_liter_per_hari') * (int) $get('jatah_liter_per_bulan'));
                             // // })
                             ->numeric()
                             ->required()
-                            ->reactive()
+                            ->live(onBlur: true)
+                            // ->reactive()
                             ->afterStateUpdated(function (callable $set, callable $get) {
                                 //menghitung kalkulasi
                                 $jatahPerHari = $get('jatah_liter_per_hari');
@@ -172,18 +204,24 @@ class PembelianBensinResource extends Resource
                             }),
                         Forms\Components\Select::make('jenis_bbm')
                             ->label('Jenis BBM')
+                            ->live(onBlur: true)
                             ->options([
                                 'PERTAMAX' => 'PERTAMAX',
                                 'PERTAMAX DEX' => 'PERTAMAX DEX',
+                                'PERTAMAX TURBO' => 'PERTAMAX TURBO',
+                                'DEXLITE' => 'DEXLITE',
                                 'PERTALITE' => 'PERTALITE',
                                 'SOLAR' => 'SOLAR'
                             ])
                             ->required(),
                         Forms\Components\TextInput::make('jumlah_liter')
                             ->label('Jumlah Liter')
-                            ->numeric()
+                            ->rules('numeric')
                             ->required()
+                            // ->reactive()
                             ->disabled()
+                            ->dehydrated(true)
+                            ->live(onBlur: true)
                             ->afterStateUpdated(function (callable $set, callable $get) {
                                 $jumlahLiter = $get('jumlah_liter');
                                 $hargaPerLiter = $get('harga_per_liter');
@@ -200,7 +238,8 @@ class PembelianBensinResource extends Resource
                             ->numeric()
                             ->required()
                             ->prefix('Rp')
-                            ->reactive()
+                            ->live(onBlur: true)
+                            // ->reactive()
                             ->afterStateUpdated(function (callable $set, callable $get) {
                                 $jumlahLiter = $get('jumlah_liter');
                                 $hargaPerLiter = $get('harga_per_liter');
@@ -213,7 +252,17 @@ class PembelianBensinResource extends Resource
                             ->numeric()
                             ->required()
                             ->prefix('Rp')
-                            ->disabled(),
+                            ->disabled()
+                            ->live(onBlur: true)
+                            ->dehydrated(true)
+                            ->afterStateUpdated(function (callable $set, callable $get) {
+                                $jumlahLiter = $get('jumlah_liter');
+                                $hargaPerLiter = $get('harga_per_liter');
+                                if ($jumlahLiter && $hargaPerLiter) {
+                                    $totalBiaya = $jumlahLiter * $hargaPerLiter;
+                                    $set('jumlah_harga', $totalBiaya);
+                                }
+                            }),
 
                         Forms\Components\Textarea::make('keterangan')
                             ->label('Keterangan')
@@ -226,22 +275,22 @@ class PembelianBensinResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')
-                    ->label('No.')
+                // Tables\Columns\TextColumn::make('id')
+                //     ->label('No.')
+                //     ->sortable(),
+                Tables\Columns\TextColumn::make('kendaraan.plat_nomor')
+                    ->label('No. Polisi')
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('kendaraan.jenis')
                     ->label('Jenis Kendaraan')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('kendaraan.tahun')
-                    ->label('Tahun')
+                Tables\Columns\TextColumn::make('kendaraan.tahun_pengadaan')
+                    ->label('Tahun Pengadaan')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('kendaraan.merk')
                     ->label('Merk')
-                    ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('kendaraan.plat_nomor')
-                    ->label('No. Polisi')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('jatah_liter_per_hari')
@@ -260,15 +309,15 @@ class PembelianBensinResource extends Resource
                     ->numeric(0)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('harga_per_liter')
-                    ->label('1 Liter')
+                    ->label('Harga Per Liter')
                     ->money('IDR')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('jumlah_harga')
-                    ->label('Jumlah')
+                    ->label('Total Biaya')
                     ->money('IDR')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('pengguna.nama')
-                    ->label('Pemegang')
+                    ->label('Nama Pengguna')
                     ->searchable()
                     ->sortable(),
             ])
