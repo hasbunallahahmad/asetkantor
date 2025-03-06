@@ -2,6 +2,11 @@
 
 namespace App\Models;
 
+use App\Models\JenisKendaraan;
+use App\Models\Pengguna;
+use App\Models\PembayaranStnk;
+use App\Models\PembelianBensin;
+use App\Models\ServisKendaraan;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -22,7 +27,7 @@ class Kendaraan extends Model
         'tahun_pengadaan',
         'tahun',
         'jenis_kendaraan_id',
-        'jenis',
+        // 'jenis',
         'jatah_liter_per_hari',
         'anggaran_tahunan',
         'tanggal_pajak_tahunan',
@@ -44,7 +49,8 @@ class Kendaraan extends Model
             $model->jatah_liter_per_hari = $model->jenis_kendaraan === 'roda_4' ? 7 : 1;
         });
     }
-    public function jenisKendaraan(): BelongsTo
+    // Di App\Models\Kendaraan.php
+    public function jenisKendaraan()
     {
         return $this->belongsTo(JenisKendaraan::class, 'jenis_kendaraan_id');
     }

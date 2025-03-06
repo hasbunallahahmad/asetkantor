@@ -1,12 +1,20 @@
 <?php
 
+use App\Filament\Pages\CetakServisKendaraan;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ExportLaporanController;
 use App\Http\Controllers\ExportServisController;
+use App\Models\Kendaraan;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/download-servis-pdf/{Kendaraan_id}', function ($kendaraan_id) {
+    $page = new CetakServisKendaraan();
+    $page->kendaraan_id = $kendaraan_id;
+    return $page->generatePdf();
+})->name('download.servis.pdf');
 // Route::get('/export/pdf/bbm', [ExportLaporanController::class, 'exportPdfBbm'])->name('export.pdf.bbm');
 // Route::get('/export/excel/bbm', [ExportLaporanController::class, 'exportExcelBbm'])->name('export.excel.bbm');
 

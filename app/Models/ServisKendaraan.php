@@ -18,7 +18,7 @@ class ServisKendaraan extends Model
         'bengkel',
         'biaya',
         'keterangan',
-        'pengeluaran_id'
+        // 'pengeluaran_id'
     ];
     protected $casts = [
         'tanggal_servis' => 'date',

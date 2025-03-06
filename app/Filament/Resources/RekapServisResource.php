@@ -53,7 +53,7 @@ class RekapServisResource extends Resource
             ->actions([
                 Tables\Actions\Action::make('PDF')
                     ->label('PDF')
-                    ->icon('heroicon-m-printer')
+                    // ->icon('heroicon-m-printer')
                     // ->url(fn() => route('export.pdf.servis'))
                     ->url(fn($record) => route('export.pdf.servis', ['plat_nomor' => $record->kendaraan->plat_nomor]))
                     ->openUrlInNewTab(),
