@@ -250,6 +250,7 @@ class PembelianBensinResource extends Resource
                         Forms\Components\TextInput::make('jumlah_harga')
                             ->label('Jumlah Harga (Rp)')
                             ->numeric()
+                            ->formatStateUsing(fn($state) => number_format($state, 0, ',', '.'))
                             ->required()
                             ->prefix('Rp')
                             ->disabled()
