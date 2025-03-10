@@ -38,17 +38,17 @@ class PembayaranStnkExpiryNotification extends Notification
     /**
      * Get the mail representation of the notification.
      */
-    public function toMail(object $notifiable): MailMessage
-    {
-        $kendaraan = $this->pembayaranStnk->kendaraan;
-        $jenisPembayaran = $this->pembayaranStnk->jenis_pembayaran;
-        return (new MailMessage)
-            ->subject("Peringatan: {$jenisPembayaran} untuk kendaraan {$kendaraan->nomor_plat} akan kadaluarsa")
-            ->line("Pembayaran {$jenisPembayaran} untuk kendaraan dengan nomor plat {$kendaraan->nomor_plat} akan kadaluarsa dalam {$this->daysRemaining} hari.")
-            ->line("Tanggal kadaluarsa: " . $this->pembayaranStnk->berlaku_hingga->format('d M Y'))
-            ->action('Lihat Detail', url("/admin/pembayaran-stnks/{$this->pembayaranStnk->id}"))
-            ->line('Segera lakukan perpanjangan untuk menghindari denda!');
-    }
+    // public function toMail(object $notifiable): MailMessage
+    // {
+    //     $kendaraan = $this->pembayaranStnk->kendaraan;
+    //     $jenisPembayaran = $this->pembayaranStnk->jenis_pembayaran;
+    //     return (new MailMessage)
+    //         ->subject("Peringatan: {$jenisPembayaran} untuk kendaraan {$kendaraan->nomor_plat} akan kadaluarsa")
+    //         ->line("Pembayaran {$jenisPembayaran} untuk kendaraan dengan nomor plat {$kendaraan->nomor_plat} akan kadaluarsa dalam {$this->daysRemaining} hari.")
+    //         ->line("Tanggal kadaluarsa: " . $this->pembayaranStnk->berlaku_hingga->format('d M Y'))
+    //         ->action('Lihat Detail', url("/admin/pembayaran-stnks/{$this->pembayaranStnk->id}"))
+    //         ->line('Segera lakukan perpanjangan untuk menghindari denda!');
+    // }
 
     /**
      * Get the array representation of the notification.

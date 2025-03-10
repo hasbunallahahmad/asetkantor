@@ -43,34 +43,6 @@ class PembayaranStnkResource extends Resource
     {
         return $form
             ->schema([
-
-                // Format awal Halaman Form input 
-                // Forms\Components\Grid::make(2)
-                //     ->schema([
-                //         Forms\Components\Select::make('kendaraan_id')
-                //             ->relationship('kendaraan', 'plat_nomor')
-                //             ->required()
-                //             ->searchable()
-                //             ->preload(),
-                //         Forms\Components\DatePicker::make('tanggal_bayar')
-                //             ->label('Tanggal Pembayaran')
-                //             ->required(),
-                //         Forms\Components\TextInput::make('biaya')
-                //             ->label('Biaya')
-                //             ->prefix('Rp')
-                //             ->numeric()
-                //             ->required(),
-                //         Forms\Components\DatePicker::make('berlaku_hingga')
-                //             ->label('Berlaku Sampai Dengan')
-                //             ->disabled()
-                //             ->default(fn($get) => $get('tanggal_bayar')
-                //                 ? \Carbon\Carbon::parse($get('tanggal_bayar')->addYear()->format('Y-m-d')) : null),
-                //         Forms\Components\Textarea::make('keterangan')
-                //             ->label('Keterangan')
-                //             ->columnSpan(2),
-                // ])
-
-
                 Section::make('Informasi Kendaraan & Pembayaran')
                     ->description('Detail kendaraan dan informasi pembayaran')
                     ->schema([
@@ -98,7 +70,7 @@ class PembayaranStnkResource extends Resource
                                     ->label('Biaya Pembayaran')
                                     ->numeric()
                                     ->prefix('Rp')
-                                    ->required()
+                                    // ->required()
                                     ->columnSpan(1),
 
                                 Select::make('jenis_pembayaran')
@@ -162,24 +134,6 @@ class PembayaranStnkResource extends Resource
     {
         return $table
             ->columns([
-
-                // // Tampilan Format Awal Filamnet
-                // TextColumn::make('kendaraan.plat_nomor')
-                //     ->label('Plat Nomor')
-                //     ->sortable(),
-                // TextColumn::make('tanggal_bayar')
-                //     ->label('Tanggal Bayar')
-                //     ->date()
-                //     ->sortable(),
-                // TextColumn::make('biaya')
-                //     ->label('Biaya')
-                //     ->money('IDR')
-                //     ->sortable(),
-                // TextColumn::make('berlaku_hingga')
-                //     ->label('Berlaku Hingga')
-                //     ->date()
-                //     ->sortable(),
-
                 Tables\Columns\TextColumn::make('id')
                     ->searchable()
                     ->sortable()
@@ -266,19 +220,6 @@ class PembayaranStnkResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-
-                //Filter Awal Format Filament
-                // Filter::make('tanggal_bayar')
-                //     ->form([
-                //         DatePicker::make('from'),
-                //         DatePicker::make('until'),
-                //     ])
-                //     ->query(
-                //         fn(Builder $query, array $data): Builder => $query
-                //             ->when($data['from'], fn(Builder $query, $date): Builder => $query->whereDate('tanggal_bayar', '>=', $date))
-                //             ->when($data['until'], fn(Builder $query, $date): Builder => $query->whereDate('tanggal_bayar', '<=', $date))
-                //     ),
-
                 Tables\Filters\SelectFilter::make('jenis_pembayaran')
                     ->options([
                         'TNKB' => 'Pembayaran TNKB',

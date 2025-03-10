@@ -31,9 +31,9 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->brandName('SIPAKEN')
-            // ->brandLogo(asset('images/logo.png'))
-            // ->brandLogoHeight('auto')
+            ->favicon(asset('pemkot32x32.png'))
+            ->brandLogo(asset('pemkot.png'))
+            ->brandLogoHeight('auto')
             ->login()
             ->colors([
                 'primary' => Color::Amber,

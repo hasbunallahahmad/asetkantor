@@ -12,6 +12,7 @@ use Carbon\Carbon;
 
 class PembayaranStnkExpiry extends BaseWidget
 {
+
     protected static ?int $sort = 5;
 
     protected int | string | array $columnSpan = 'full';
@@ -51,13 +52,17 @@ class PembayaranStnkExpiry extends BaseWidget
             )
             ->columns([
                 // ...
-                Tables\Columns\TextColumn::make('kendaraan.nomor_plat')
+                Tables\Columns\TextColumn::make('kendaraan.plat_nomor')
                     ->label('Nomor Plat')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('kendaraan.pengguna.nama')
+                    ->label('Pengguna')
                     ->searchable()
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('jenis_pembayaran')
-                    ->label('Jenis Pembayaran')
+                    ->label('Jenis STNK')
                     ->badge()
                     ->color(fn(string $state): string => match ($state) {
                         'TNKB' => 'success',
@@ -82,12 +87,12 @@ class PembayaranStnkExpiry extends BaseWidget
                     ->money('IDR'),
             ])
             ->actions([
-                Tables\Actions\Action::make('view')
-                    ->url(
-                        fn(PembayaranStnk $record): string =>
-                        route('filament.admin.resources.pembayaran-stnks.view', ['record' => $record])
-                    )
-                    ->icon('heroicon-o-eye'),
+                // Tables\Actions\Action::make('view')
+                //     // ->url(
+                //     //     fn(PembayaranStnk $record): string =>
+                //     //     route('app.Filament.Resources.PembayaranStnkResource.view', ['record' => $record])
+                //     // )
+                //     ->icon('heroicon-o-eye'),
             ])
             ->emptyStateHeading('Tidak ada pembayaran yang akan kadaluarsa dalam 3 bulan ke depan');
     }
