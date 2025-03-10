@@ -70,7 +70,7 @@
                                 <td class="border border-gray-300 px-2 py-1 text-xs">{{ $item->pengguna->nama ?? '-' }}
                                 </td>
                                 <td
-                                    class="border border-gray-300 px-2 py-1 text-xs {{ $index % 2 == 0 ? 'text-left' : 'text-right' }}">
+                                    class="border border-gray-300 px-2 py-1 text-xs {{ $index % 2 == 0 ? 'text-left' : 'text-center' }}">
                                     @if ($index % 2 == 0)
                                         {{ $index + 1 }}.
                                     @else
@@ -90,7 +90,7 @@
                 </table>
             </div>
             {{-- <div class="mt-8 text-center ml-12"> --}}
-            <div class="mt-8 flex justify-end w-full">
+            <div class="mt-6 flex justify-end w-full">
                 <div class="text-sm text-center">
                     <p class="text-sm">Semarang, {{ $previewData['tanggalCetak'] }}</p>
                     <p class="text-sm mt-1">Kuasa Pengguna Anggaran</p>

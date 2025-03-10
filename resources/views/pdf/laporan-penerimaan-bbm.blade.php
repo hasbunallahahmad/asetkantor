@@ -204,21 +204,21 @@
         }
 
         .header h1 {
-            font-size: 14pt;
+            font-size: 18pt;
             font-weight: bold;
             margin: 0;
             padding: 0;
         }
 
         .header h2 {
-            font-size: 12pt;
+            font-size: 16pt;
             font-weight: bold;
             margin: 5px 0;
             padding: 0;
         }
 
         .header h3 {
-            font-size: 11pt;
+            font-size: 14pt;
             font-weight: bold;
             margin: 5px 0;
             padding: 0;
@@ -270,25 +270,25 @@
         /* Menyesuaikan lebar kolom */
         th:nth-child(5),
         td:nth-child(5) {
-            width: 12%;
+            width: 9%;
             /* Nomor Polisi lebih lebar */
         }
 
         th:nth-child(6),
         td:nth-child(6) {
-            width: 6%;
+            width: 5%;
             /* Liter/Hari lebih kecil */
         }
 
         th:nth-child(10),
         td:nth-child(10) {
-            width: 8%;
+            width: 86;
             /* Harga(Rp)/Liter lebih kecil */
         }
 
         th:nth-child(12),
         td:nth-child(12) {
-            width: 15%;
+            width: 10%;
             /* Pemegang lebih besar */
         }
 
