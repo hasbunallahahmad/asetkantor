@@ -85,7 +85,7 @@ class PembayaranStnkResource extends Resource
                                     ->columnSpan(2),
 
                                 DatePicker::make('tanggal_bayar')
-                                    ->label('Tanggal Pembayaran')
+                                    ->label('Tanggal STNK ')
                                     ->required()
                                     ->default(now())
                                     ->columnSpan(1),
@@ -235,8 +235,8 @@ class PembayaranStnkResource extends Resource
                             return 'Sudah Kadaluarsa';
                         }
 
-                        //Jika Hampir kadaluarsa ( 1 tahunsebelum kadaluarsa )
-                        if ($today->diffInDays($tanggalBerlaku) <= 365) {
+                        //Jika Hampir kadaluarsa ( 3 bulan sebelum kadaluarsa )
+                        if ($today->diffInDays($tanggalBerlaku) <= 90) {
                             return 'Hampir Kadaluarsa';
                         }
                         // Jika masih aktif

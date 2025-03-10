@@ -20,10 +20,10 @@ class PengeluaranResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-m-currency-dollar';
     protected static ?string $navigationGroup = 'Cash Flow';
     protected static ?int $navigationSort = 4;
-    public static function shouldRegisterNavigation(): bool
-    {
-        return false; // Menu tidak akan muncul di sidebar
-    }
+    // public static function shouldRegisterNavigation(): bool
+    // {
+    //     return false; // Menu tidak akan muncul di sidebar
+    // }
 
     public static function getNavigationBadge(): ?string
     {

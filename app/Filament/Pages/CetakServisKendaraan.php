@@ -139,7 +139,11 @@ class CetakServisKendaraan extends Page
         $pdf->setOptions([
             'defaultFont' => 'DejaVu Sans'
         ]);
-        return $pdf->download($fileName);
+        // return $pdf->download($fileName);
+
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->stream();
+        }, 'servis-kendaraan.pdf');
     }
     // public function generatePdf(): void
     // {

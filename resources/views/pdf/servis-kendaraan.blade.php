@@ -75,19 +75,19 @@
 <body>
     <div class="header">
         <h1>LAPORAN SERVIS KENDARAAN</h1>
-        <p>Tanggal Cetak: {{ $tanggal_cetak }}</p>
+        {{-- <p>Tanggal Cetak {{ $tanggal_cetak }}</p> --}}
     </div>
 
     <div class="kendaraan-info">
         <h2>Detail Kendaraan</h2>
         <div class="info-grid">
             <div>
-                <p><strong>Plat Nomor:</strong> {{ $kendaraan->plat_nomor }}</p>
-                <p><strong>Tipe Kendaraan:</strong> {{ $kendaraan->tipe_kendaraan ?? '-' }}</p>
+                <p><strong>Plat Nomor</strong> {{ $kendaraan->plat_nomor }}</p>
+                <p><strong>Tipe Kendaraan</strong> {{ $kendaraan->model ?? '-' }}</p>
             </div>
             <div>
-                <p><strong>Merek:</strong> {{ $kendaraan->merek ?? '-' }}</p>
-                <p><strong>Tahun:</strong> {{ $kendaraan->tahun ?? '-' }}</p>
+                <p><strong>Merek</strong> {{ $kendaraan->merk ?? '-' }}</p>
+                <p><strong>Tahun</strong> {{ $kendaraan->tahun_pengadaan ?? '-' }}</p>
             </div>
         </div>
     </div>
@@ -122,7 +122,7 @@
             </tbody>
         </table>
     @else
-        <p>Tidak ada data servis untuk kendaraan ini.</p>
+        <p>Tidak ada data servis untuk kendaraan ini</p>
     @endif
 
     <div class="footer">

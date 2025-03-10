@@ -7,7 +7,7 @@
         <div class="mt-6 p-6 bg-white rounded-lg shadow">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold">Laporan Servis Kendaraan</h2>
-                <p class="text-gray-500">Tanggal Cetak: {{ now()->format('d/m/Y H:i') }}</p>
+                {{-- <p class="text-gray-500">Tanggal Cetak: {{ now()->format('d/m/Y H:i') }}</p> --}}
             </div>
 
             <div class="mb-6 p-4 bg-gray-50 rounded">

@@ -51,9 +51,8 @@ class AdminPanelProvider extends PanelProvider
                 DashboardFilterWidget::class,
                 PembayaranStnkExpiry::class,
                 ServisKendaraanStatsWidget::class,
-
-                // Widgets\AccountWidget::class,
-                // Widgets\FilamentInfoWidget::class,
+                Widgets\AccountWidget::class,
+                Widgets\FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

@@ -368,7 +368,7 @@ class PembelianBensinResource extends Resource
             ->emptyStateActions([
                 Tables\Actions\CreateAction::make(),
             ])
-            ->defaultSort('created_at', 'desc');
+            ->defaultSort('created_at', 'asc');
     }
 
     public static function getRelations(): array
