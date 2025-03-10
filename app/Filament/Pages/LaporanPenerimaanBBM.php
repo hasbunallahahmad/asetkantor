@@ -185,7 +185,8 @@ class LaporanPenerimaanBBM extends Page
         }
 
         $pdf = PDF::loadView('pdf.laporan-penerimaan-bbm', $this->previewData);
-        $pdf->setPaper('Folio', 'landscape');
+        // $pdf->setPaper('Folio', 'landscape');
+        $pdf->setPaper([0, 0, 595, 935], 'landscape');
 
         $filename = "Laporan_Penerimaan_BBM_{$this->bulanLabel}_{$this->tahun}.pdf";
 
